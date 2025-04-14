@@ -48,19 +48,23 @@ function show(req, res) {
 function store(req, res) {
 
   // create new object
-  const newPost = {
-    title: req.body.title,
-    slug: req.body.slug,
-    content: req.body.content,
-    image: req.body.image,
-    tags: req.body.tags
-  }
-  // save new object in array
-  posts.push(newPost)
-  // log the array with the new post
-  console.log(posts);
-  // return new post on postman
-  res.status(201).json(newPost)
+  const { title, content, image } = req.body;
+
+
+
+  const sql = `INSERT INTO posts(title, content, image) VALUES(?, ?, ?);`
+  const values = [title, content, image]
+
+  connection.query(sql, values, (err, results) => {
+    if (err) return res.status(500).json({ error: err.message })
+    res.status(201).json({ message: 'Post create successfully' })
+  })
+  // // save new object in array
+  // posts.push(newPost)
+  // // log the array with the new post
+  // console.log(posts);
+  // // return new post on postman
+  // res.status(201).json(newPost)
 
 }
 
