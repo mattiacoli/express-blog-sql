@@ -50,8 +50,6 @@ function store(req, res) {
   // create new object
   const { title, content, image } = req.body;
 
-
-
   const sql = `INSERT INTO posts(title, content, image) VALUES(?, ?, ?);`
   const values = [title, content, image]
 
@@ -59,40 +57,28 @@ function store(req, res) {
     if (err) return res.status(500).json({ error: err.message })
     res.status(201).json({ message: 'Post create successfully' })
   })
-  // // save new object in array
-  // posts.push(newPost)
-  // // log the array with the new post
-  // console.log(posts);
-  // // return new post on postman
-  // res.status(201).json(newPost)
-
 }
 
 // update
 function update(req, res) {
-  // find post by slug
+
   const postId = req.params.id
-  const post = posts.find(post => post.id === Number(postId))
-  // handle message 404 if post not found
-  if (!post) {
-    return res.status(404).json({
-      error: "error 404",
-      message: "post not found"
-    })
-  }
 
-  // edit all object key
-  post.title = req.body.title
-  post.slug = req.body.title.replaceAll(' ', '-').toLowerCase()
-  post.content = req.body.content
-  post.image = req.body.image
-  post.tags = req.body.tags
+  const { title, content, image } = req.body
 
-  // check edits in array
-  console.log(posts);
 
-  // return edited post on postman
-  res.json(post)
+  const sql = 'UPDATE posts SET title = ?, content=?, image=? WHERE(id =?);'
+
+  const values = [title, content, image, postId]
+
+  connection.query(sql, values, (err, results) => {
+    if (err) return res.status(500).json({ error: err.message })
+    if (results.length === 0) res.status(404).json({ message: 'Post not found' })
+    res.status(200).json({ message: 'Post update successfully' })
+    const post = results[0]
+    res.json(post)
+  })
+
 }
 
 // modify
