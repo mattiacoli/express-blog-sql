@@ -3,13 +3,23 @@ const posts = require('../data/posts')
 
 // index
 function index(req, res) {
-  let filterPosts = posts
-  const tag = req.query.tag
-  if (tag) {
-    filterPosts = posts.filter(post => post.tags.includes(tag))
-  }
 
-  res.json(filterPosts)
+  const sql = 'SELECT * FROM posts'
+
+  connection.query(sql, (err, result) => {
+    if (err) res.status(500).json({ error: 'Query Failed' })
+    console.log(result);
+    res.json(result)
+
+  })
+
+  // let filterPosts = posts
+  // const tag = req.query.tag
+  // if (tag) {
+  //   filterPosts = posts.filter(post => post.tags.includes(tag))
+  // }
+
+  // res.json(filterPosts)
 }
 
 // show
