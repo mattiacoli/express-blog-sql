@@ -17,14 +17,15 @@ function index(req, res) {
 // show
 function show(req, res) {
   const postId = req.params.id
-  const post = posts.find(post => post.id === Number(postId))
-  if (!post) {
-    return res.status(404).json({
-      error: "error 404",
-      message: "post not found"
-    })
-  }
-  res.json(post)
+
+  const sql = 'SELECT * FROM posts WHERE id=?'
+
+  connection.query(sql, [postId], (error, result) => {
+    if (error) return res.status(500).json({ error: `Query Failed` })
+    if (result.length === 0) return res.status(400).json({ message: 'Post not found' })
+    res.json(result[0])
+  })
+
 }
 
 // store
