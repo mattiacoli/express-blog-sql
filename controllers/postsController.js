@@ -7,19 +7,11 @@ function index(req, res) {
   const sql = 'SELECT * FROM posts'
 
   connection.query(sql, (err, result) => {
-    if (err) res.status(500).json({ error: 'Query Failed' })
+    if (err) return res.status(500).json({ error: 'Query Failed' })
     console.log(result);
     res.json(result)
 
   })
-
-  // let filterPosts = posts
-  // const tag = req.query.tag
-  // if (tag) {
-  //   filterPosts = posts.filter(post => post.tags.includes(tag))
-  // }
-
-  // res.json(filterPosts)
 }
 
 // show
@@ -111,13 +103,14 @@ function modify(req, res) {
 function destroy(req, res) {
 
   const postId = req.params.id
-  const post = posts.find(post => post.id === Number(postId))
 
-  posts.splice(posts.indexOf(post), 1)
-  console.log(posts);
+  const sql = 'DELETE FROM posts WHERE id=?'
 
-  res.sendStatus(204)
+  connection.query(sql, [postId], (err) => {
+    if (err) return res.status(500).json({ error: 'Query Failed' })
 
+    res.sendStatus(204)
+  })
 }
 
 module.exports = { index, show, store, update, modify, destroy }
